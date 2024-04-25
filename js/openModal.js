@@ -5,6 +5,9 @@ const myModal = new bootstrap.Modal("#myModal", {
 });
 
 function openModal(nombreModulo, desafios) {
+  $("#selectFechaPago").val("");
+  $("#selectFechaEntrega").val("");
+
   $("#myModalLabel").text(nombreModulo);
   agregarDesafiosModal(desafios);
   myModal.show();

@@ -1,40 +1,31 @@
-import guardarPromesaDePago from "./guardarPromesaDePago";
-import resetModal from "./resetModal";
-import { promesaPago } from "./selectFechaEntrega";
-import { recuperarDb } from "./recuperarDb";
-import { desafiosTerminados } from "./recuperarDb";
+import { actualizarDb } from "./recuperarDb";
+import renderizarTabla from "./renderizarTabla";
+import createRowTable from "./createRowTable";
 
-function saveModal() {
-  if (
-    promesaPago.desafio &&
-    promesaPago.fechaDePago &&
-    promesaPago.fechaEntrega
-  ) {
-    console.log(promesaPago);
-    console.log(desafiosTerminados);
-    const estaRepetido = desafiosTerminados.some(
-      (e) => e.desafio === promesaPago.desafio
-    );
+function saveModal(db) {
+  const desafioModal = $("#selectDesafios").val();
+  const newDb = db.map((modulo) => {
+    modulo.desafios.forEach((desafio) => {
+      if (desafioModal === desafio.nombre) {
+        desafio.fechaPago = $("#selectFechaPago").val();
+      }
+    });
+    return modulo;
+  });
 
-    console.log(estaRepetido);
+  console.log({ newDb });
+  actualizarDb(newDb);
+  renderizarTabla(newDb, createRowTable);
 
-    if (estaRepetido) {
-      $("#modalError").removeClass("d-none");
-      setTimeout(() => {
-        $("#modalError").addClass("d-none");
-      }, 3000);
-    } else {
-      guardarPromesaDePago(promesaPago);
-      $("#modalSuccess").removeClass("d-none");
-      setTimeout(() => {
-        $("#modalSuccess").addClass("d-none");
-      }, 3000);
-      recuperarDb();
-    }
+  $("#modalSuccess").removeClass("d-none");
+  setTimeout(() => {
+    $("#modalSuccess").addClass("d-none");
+  }, 3000);
 
-    resetModal(promesaPago);
-    $("#buttonSaveModal").attr("disabled", true);
-  }
+  //reset
+  $("#selectFechaEntrega").val("");
+  $("#selectFechaPago").val("");
+  $("#buttonSaveModal").attr("disabled", true);
 }
 
 export default saveModal;
